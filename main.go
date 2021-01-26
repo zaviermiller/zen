@@ -209,6 +209,7 @@ func main() {
 	t1 := time.Now()
 
 	// Start test execution
+	fmt.Println("")
 	printLoader(0, len(inputs), "Execution finished! Executing test lab...")
 
 	// outputs of test execution
