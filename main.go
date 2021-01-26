@@ -62,7 +62,7 @@ type output struct {
 func (o output) compareDiff(o1 output) *zenDiff {
 	om := []string{"PROMPT", "RESPONSE"}
 	if o.outputType != o1.outputType {
-		return &zenDiff{errorType: "OUTPUT TYPE ", testDiff: om[o1.outputType], correctDiff: om[o.outputType]}
+		return &zenDiff{errorType: "OUTPUT TYPE", testDiff: om[o1.outputType], correctDiff: om[o.outputType]}
 	}
 
 	// fDiffChan := make(chan int)
@@ -82,7 +82,7 @@ func (o output) compareDiff(o1 output) *zenDiff {
 		if char != rune(o1.content[i]) {
 			// bDiff := i
 			// break
-			return &zenDiff{errorType: om[o1.outputType] + " CONTENT ", testDiff: o1.content[i:], correctDiff: o.content[i:]}
+			return &zenDiff{errorType: om[o1.outputType] + " CONTENT", testDiff: o1.content[i:], correctDiff: o.content[i:]}
 		}
 	}
 
@@ -99,8 +99,8 @@ type zenDiff struct {
 }
 
 func (z zenDiff) print(id int, correctBinPath, testBinPath string) {
-	fmt.Println("!!!" + u.Red + u.Bright + z.errorType + "DIFF!!! " + u.Normal + "\n")
-	fmt.Println("   " + correctBinPath + " [" + strconv.Itoa(id) + "]: " + u.Green + u.Bright + z.correctDiff + u.Normal)
+	fmt.Println(u.Red + u.Bright + u.Clear + "!!!" + z.errorType + " DIFF!!! " + u.Normal + "\n")
+	fmt.Println("   " + correctBinPath + " [" + strconv.Itoa(id) + "]: " + u.Green + z.correctDiff + u.Normal)
 	fmt.Println("   " + testBinPath + " [" + strconv.Itoa(id) + "]: " + u.Red + z.testDiff + u.Normal + "\n")
 }
 
@@ -183,7 +183,7 @@ func main() {
 	t1 := time.Now()
 
 	// Start test execution
-	fmt.Print("\r[" + u.Purple + "*" + u.Normal + "] Execution finished! Executing test lab...")
+	fmt.Print("\n\r[" + u.Purple + "*" + u.Normal + "] Execution finished! Executing test lab...")
 
 	testOutputs := []output{}
 
@@ -245,6 +245,8 @@ func main() {
 			for i := 1; i < 3; i++ {
 				if testIndex+i < len(testOutputs) {
 					if output.content == testOutputs[testIndex+i].content {
+						zenDiff{errorType: "LINE", correctDiff: "", testDiff: testOutput.content}.print(correctIndex, correctBinPath, testBinPath)
+						diffCount++
 						testIndex += i
 						testOutput = testOutputs[testIndex]
 						break
@@ -253,6 +255,8 @@ func main() {
 
 				if correctIndex+i < len(outputs) {
 					if outputs[i+correctIndex].content == testOutputs[testIndex].content {
+						zenDiff{errorType: "LINE", correctDiff: output.content, testDiff: ""}.print(correctIndex, correctBinPath, testBinPath)
+						diffCount++
 						correctIndex += i
 						output = outputs[correctIndex]
 						break
@@ -271,7 +275,7 @@ func main() {
 
 		testIndex++
 		correctIndex++
-		// time.Sleep(100 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 		printLoader(max(correctIndex, testIndex), max(len(testOutputs), len(outputs)))
 
 		// loaderProgress <- max(testIndex, correctIndex)
@@ -287,7 +291,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("Score: ", float64(diffCount)/float64(len(outputs)))
+	fmt.Println("\n[" + u.Purple + "*" + u.Normal + "] Score: " + colorScore(float64(len(outputs)-diffCount)/float64(len(outputs))) + "\n")
 
 }
 
@@ -312,4 +316,15 @@ func printLoader(done, total int) {
 	equals := strings.Repeat("=", int(progress*width))
 	dashes := strings.Repeat("-", int((1.0-progress)*width))
 	fmt.Print(fmt.Sprintf("["+u.Purple+"*"+u.Normal+"] Finding diffs... [ "+equals+dashes+" ] [%d/%d compared] - (%f", int(done), int(total), math.Round(progress*100.0*100.0)/100.0) + "%) \r")
+}
+
+func colorScore(score float64) string {
+	textScore := fmt.Sprintf("%.2f", score)
+	if score >= .75 {
+		return u.Green + textScore + u.Normal
+	} else if score >= .5 {
+		return u.Yellow + textScore + u.Normal
+	} else {
+		return u.Red + textScore + u.Normal
+	}
 }

@@ -16,6 +16,8 @@ var Dark = "\033[2m"
 
 var Normal = "\033[0m"
 
+var Clear = "\u001b[2K"
+
 var Zen = ` ____         
 /_  / ___ ___ 
  / /_/ -_) _ \
