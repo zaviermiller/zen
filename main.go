@@ -209,7 +209,7 @@ func main() {
 	t1 := time.Now()
 
 	// Start test execution
-	zenLog("Execution finished! Executing test lab...")
+	printLoader(0, len(inputs), "Execution finished! Executing test lab...")
 
 	// outputs of test execution
 	testOutputs := []output{}
@@ -249,20 +249,21 @@ func main() {
 	check(err)
 
 	// do each input with time between
-	for _, input := range inputs {
+	for i, input := range inputs {
 		time.Sleep(300 * time.Millisecond)
 		inpSubject.notifyInput()
 		io.WriteString(testIn, input)
+		printLoader(i+1, len(inputs), "Execution finished! Executing test lab...")
 	}
 
 	// wait for lab test to finish
 	cmd.Wait()
 
 	// show test exec is done
-	fmt.Println(u.Bright + "Done!" + u.Normal + "\n")
+	fmt.Println(u.Clear + u.Bright + "Done!" + u.Normal + "\n")
 
 	// begin showing comp loader
-	printLoader(0, max(len(testOutputs), len(outputs)))
+	printLoader(0, max(len(testOutputs), len(outputs)), "Finding diffs...")
 
 	// diff vars
 	diffCount := 0
@@ -313,7 +314,7 @@ func main() {
 		testIndex++
 		correctIndex++
 		time.Sleep(10 * time.Millisecond)
-		printLoader(max(correctIndex, testIndex), max(len(testOutputs), len(outputs)))
+		printLoader(max(correctIndex, testIndex), max(len(testOutputs), len(outputs)), "Finding diffs...")
 	}
 
 	// get elapsed time
@@ -350,13 +351,13 @@ func max(a, b int) int {
 }
 
 // prints loader
-func printLoader(done, total int) {
+func printLoader(done, total int, msg string) {
 	width := 50.0
 
 	progress := float64(done) / float64(total)
 	equals := strings.Repeat("=", int(progress*width))
 	dashes := strings.Repeat("-", int((1.0-progress)*width))
-	fmt.Print(fmt.Sprintf("["+u.Purple+"*"+u.Normal+"] Finding diffs... [ "+equals+dashes+" ] [%d/%d compared] - (%f", int(done), int(total), math.Round(progress*100.0*100.0)/100.0) + "%) \r")
+	fmt.Print(fmt.Sprintf("["+u.Purple+"*"+u.Normal+"] "+msg+" [ "+equals+dashes+" ] [%d/%d compared] - (%f", int(done), int(total), math.Round(progress*100.0*100.0)/100.0) + "%) \r")
 }
 
 // computes color of score
