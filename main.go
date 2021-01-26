@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
 	u "github.com/zaviermiller/zen/util"
@@ -178,6 +180,9 @@ func main() {
 
 	inpSubject.unregisterAll()
 
+	t1 := time.Now()
+
+	// Start test execution
 	fmt.Print("\r[" + u.Purple + "*" + u.Normal + "] Execution finished! Executing test lab...")
 
 	testOutputs := []output{}
@@ -220,32 +225,36 @@ func main() {
 
 	cmd.Wait()
 
-	fmt.Println(u.Bright + "Done!" + u.Normal)
+	fmt.Println(u.Bright + "Done!" + u.Normal + "\n")
 
-	fmt.Println("\n[" + u.Purple + "*" + u.Normal + "] Finding diffs...")
+	printLoader(0, max(len(testOutputs), len(outputs)))
 
 	diffCount := 0
 	testIndex := 0
+	correctIndex := 0
 
-	for i, output := range outputs {
+	for correctIndex < len(outputs) {
 		if testIndex >= len(testOutputs) {
 			break
 		}
 		testOutput := testOutputs[testIndex]
+		output := outputs[correctIndex]
 
-		if output.content[0] != testOutput.content[0] {
-			for j := 1; j < 3; j++ {
-				if testIndex+j <= len(testOutputs) {
-					if output.content[0] == testOutputs[testIndex+j].content[0] {
-						testIndex += j
+		if output.content != testOutput.content {
+			// check two lines
+			for i := 1; i < 3; i++ {
+				if testIndex+i < len(testOutputs) {
+					if output.content == testOutputs[testIndex+i].content {
+						testIndex += i
 						testOutput = testOutputs[testIndex]
 						break
 					}
-				} else if i+j >= 0 {
-					if outputs[i+j].content[0] == testOutputs[testIndex].content[0] {
-						i += j
-						output = outputs[i]
-						fmt.Println(testOutput.content, output.content)
+				}
+
+				if correctIndex+i < len(outputs) {
+					if outputs[i+correctIndex].content == testOutputs[testIndex].content {
+						correctIndex += i
+						output = outputs[correctIndex]
 						break
 					}
 				}
@@ -257,17 +266,26 @@ func main() {
 
 		if diff != nil {
 			diffCount++
-			diff.print(i, correctBinPath, testBinPath)
+			diff.print(correctIndex, correctBinPath, testBinPath)
 		}
 
 		testIndex++
+		correctIndex++
+		// time.Sleep(100 * time.Millisecond)
+		printLoader(max(correctIndex, testIndex), max(len(testOutputs), len(outputs)))
+
+		// loaderProgress <- max(testIndex, correctIndex)
 	}
 
+	t2 := time.Now()
+	elapsed := t2.Sub(t1)
+
+	fmt.Println(fmt.Sprintf("\n\n["+u.Purple+"*"+u.Normal+"] Finished comparing files in %s", elapsed))
+
 	if diffCount == 0 {
-		fmt.Println(u.Bright + u.Green + "\nNO DIFFERENCES DETECTED! 100% GOOD JOB!\n" + u.Normal)
+		fmt.Println(u.Bright + u.Green + "\nNO MAJOR DIFFERENCES DETECTED! 100% GOOD JOB!\n" + u.Normal)
 		return
 	}
-	fmt.Println(outputs, testOutputs)
 
 	fmt.Println("Score: ", float64(diffCount)/float64(len(outputs)))
 
@@ -278,4 +296,20 @@ func check(err error) {
 		fmt.Println(u.Bright + u.Red + "ZEN ERROR: " + u.Normal + err.Error())
 		os.Exit(1)
 	}
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func printLoader(done, total int) {
+	width := 50.0
+
+	progress := float64(done) / float64(total)
+	equals := strings.Repeat("=", int(progress*width))
+	dashes := strings.Repeat("-", int((1.0-progress)*width))
+	fmt.Print(fmt.Sprintf("["+u.Purple+"*"+u.Normal+"] Finding diffs... [ "+equals+dashes+" ] [%d/%d compared] - (%f", int(done), int(total), math.Round(progress*100.0*100.0)/100.0) + "%) \r")
 }
