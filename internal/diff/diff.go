@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	u "github.com/zaviermiller/zen/util"
+	u "github.com/zaviermiller/zen/internal/util"
 )
 
 // difference object that contains data for printing

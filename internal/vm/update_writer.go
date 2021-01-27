@@ -3,7 +3,7 @@ package vm
 import (
 	"io"
 
-	u "github.com/zaviermiller/zen/util"
+	u "github.com/zaviermiller/zen/internal/util"
 )
 
 // Custom updater for custom read func

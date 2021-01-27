@@ -1,6 +1,6 @@
 package runner
 
-import "github.com/zaviermiller/zen/diff"
+import "github.com/zaviermiller/zen/internal/diff"
 
 // enum type for different outputs
 type OutputType int

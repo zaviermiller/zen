@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zaviermiller/zen/diff"
-	u "github.com/zaviermiller/zen/util"
-	"github.com/zaviermiller/zen/vm"
+	"github.com/zaviermiller/zen/internal/diff"
+	u "github.com/zaviermiller/zen/internal/util"
+	"github.com/zaviermiller/zen/internal/vm"
 )
 
 // implemenation of proc listener for zen session
@@ -52,8 +52,7 @@ func (z *ZenSession) Run() error {
 	}
 	z.CorrectOutputs = z.CorrectProcess.Output
 
-	fmt.Println("")
-	u.PrintLoader(0, len(z.Inputs), "Execution finished! Executing test lab...")
+	u.PrintLoader(0, len(z.Inputs), "Correct lab terminated. Executing test lab...")
 
 	t1 := time.Now()
 

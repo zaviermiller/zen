@@ -6,9 +6,9 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/zaviermiller/zen/runner"
-	u "github.com/zaviermiller/zen/util"
-	"github.com/zaviermiller/zen/vm"
+	"github.com/zaviermiller/zen/internal/runner"
+	u "github.com/zaviermiller/zen/internal/util"
+	"github.com/zaviermiller/zen/internal/vm"
 )
 
 func main() {
