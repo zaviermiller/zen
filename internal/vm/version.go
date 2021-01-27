@@ -7,7 +7,7 @@ import (
 )
 
 // current Zen version -- ONLY EDIT HERE AND KEEP AT TOP
-var VERSION Version = Version{Major: 1, Minor: 1, Patch: 2}
+var VERSION Version = Version{Major: 1, Minor: 1, Patch: 3}
 
 type Version struct {
 	Major int

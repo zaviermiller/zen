@@ -17,4 +17,4 @@ compile:
 			go build -v -o bin/zen$(v)-$$GOOS-$$GOARCH ; \
 		done ; \
 	done
-	@export V=$(v) && sh -c "'$(CURDIR)/scripts/sync_github.sh'"
+	@export V=$(v) && sh -c "'$(CURDIR)/scripts/github_release.sh'"

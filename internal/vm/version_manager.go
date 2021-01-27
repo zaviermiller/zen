@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 	"time"
 
@@ -72,6 +73,8 @@ func finishUpdate() {
 }
 
 func CheckUpdate() bool {
+	GOOS := runtime.GOOS
+	GOARCH := runtime.GOARCH
 	if strings.Contains(os.Args[0], ".tmp") {
 		finishUpdate()
 		return false
@@ -92,11 +95,20 @@ func CheckUpdate() bool {
 	ghVersion := ParseVersion(jsonVar.(map[string]interface{})["tag_name"].(string))
 
 	if ghVersion.GreaterThan(VERSION) {
-
+		assetName := fmt.Sprintf("zen%s-%s-%s", ghVersion.String(), GOOS, GOARCH)
+		var asset map[string]interface{}
 		jsonVar = jsonVar.(map[string]interface{})["assets"]
-		size := jsonVar.([]interface{})[0].(map[string]interface{})["size"].(float64)
+		for _, a := range jsonVar.([]interface{}) {
+			if a.(map[string]interface{})["name"] == assetName {
+				asset = a.(map[string]interface{})
+			}
+		}
 
-		fmt.Println(u.Bright + u.Blue + "\n   UPDATE FOUND!" + u.Green + " Version: " + ghVersion.String() + u.Normal + " (" + binSize(int64(size)) + ")")
+		if asset == nil {
+			return false
+		}
+
+		fmt.Println(u.Bright + u.Blue + "\n   UPDATE FOUND!" + u.Green + " Version: " + ghVersion.String() + u.Normal + " (" + binSize(int64(asset["size"].(float64))) + ")")
 		u.ZenLog("Would you like to update now?" + u.Yellow + " (y/n)" + u.Normal + ": ")
 
 		reader := bufio.NewReader(os.Stdin)
@@ -107,10 +119,10 @@ func CheckUpdate() bool {
 
 		switch input[0] {
 		case 'y':
-			dlUrl := jsonVar.([]interface{})[0].(map[string]interface{})["browser_download_url"].(string)
+			dlUrl := asset["browser_download_url"].(string)
 
 			// updateCheck object for managing the update
-			update := updateCheck{TagName: ghVersion.String(), BrowserDownloadUrl: dlUrl, UpdateSize: int(size)}
+			update := updateCheck{TagName: ghVersion.String(), BrowserDownloadUrl: dlUrl, UpdateSize: int(asset["size"].(float64))}
 			zenPath, err := exec.LookPath("zen")
 			check(err)
 
