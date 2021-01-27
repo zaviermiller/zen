@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// current Zen version -- ONLY EDIT HERE
-var VERSION Version = Version{Major: 1, Minor: 1, Patch: 0}
+// current Zen version -- ONLY EDIT HERE AND KEEP AT TOP
+var VERSION Version = Version{Major: 1, Minor: 1, Patch: 2}
 
 type Version struct {
 	Major int
