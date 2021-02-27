@@ -6,6 +6,7 @@ else
 	@echo "[z] Preparing Zen realease v"$(v)
 	@echo ""
 	@make compile v="$(v)"
+	@export V=$(v) && sh -c "'$(CURDIR)/scripts/github_release.sh'"
 endif
 
 compile:
@@ -17,4 +18,3 @@ compile:
 			go build -v -o bin/zen$(v)-$$GOOS-$$GOARCH ; \
 		done ; \
 	done
-	@export V=$(v) && sh -c "'$(CURDIR)/scripts/github_release.sh'"

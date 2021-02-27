@@ -2,24 +2,40 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 
+	d "github.com/zaviermiller/zen/internal/display"
 	"github.com/zaviermiller/zen/internal/runner"
-	u "github.com/zaviermiller/zen/internal/util"
 	"github.com/zaviermiller/zen/internal/vm"
 )
 
 func main() {
 
+	// flags
+	versionFlag := flag.Bool("v", false, "show the version number")
+
+	flag.Parse()
+
+	if *versionFlag {
+		ShowVersion()
+		return
+	}
+
 	if vm.CheckUpdate() {
 		return
 	}
 
+	// diff := diff.NewDiff(diff.MYERS, 0, 0, "correct", "test")
+	// diff.Calculate("zavier", "majed")
+
+	// diff.Print()
+
 	// ensure correct usage
 	if len(os.Args) < 3 {
-		check(errors.New("Usage: " + u.Purple + "zen [example binary] [your binary]" + u.Normal))
+		check(errors.New("Usage: " + d.Purple + "zen [example binary] [your binary] [flags]" + d.Normal))
 	}
 
 	// create variables from args
@@ -49,7 +65,12 @@ func main() {
 // basic error checking function
 func check(err error) {
 	if err != nil {
-		fmt.Println(u.Bright + u.Red + "ZEN ERROR: " + u.Normal + err.Error())
+		fmt.Println(d.Bright + d.Red + "ZEN ERROR: " + d.Normal + err.Error())
 		os.Exit(1)
 	}
+}
+
+// ShowVersion shows the Zen ascii logo and installed version
+func ShowVersion() {
+	fmt.Println(d.Bright + d.Purple + d.Zen(vm.VERSION.String()) + "\n")
 }

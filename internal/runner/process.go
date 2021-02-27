@@ -30,7 +30,7 @@ type ZenProcess struct {
 	OutPipe       io.ReadCloser
 }
 
-type ZenProcessListenerIface interface {
+type ZenProcessListener interface {
 	OnComplete(zProcess ZenProcess, zSession ZenSession)
 	// OnError(zProcess ZenProcess, err error)
 	OnInput(zProcess ZenProcess, zSession *ZenSession, i int)
@@ -151,4 +151,16 @@ func (z *ZenProcess) Run(zs *ZenSession, interactable bool) error {
 	zs.ProcListener.OnComplete(*z, *zs)
 	return nil
 
+}
+
+// GetResponses returns all the detected response outputs
+func (z ZenProcess) GetResponses() []string {
+	tmp := []string{}
+	for _, out := range z.Output {
+		if out.Type == RESPONSE {
+			tmp = append(tmp, out.Text())
+		}
+	}
+
+	return tmp
 }

@@ -7,7 +7,7 @@ import (
 )
 
 // current Zen version -- ONLY EDIT HERE AND KEEP AT TOP
-var VERSION Version = Version{Major: 1, Minor: 1, Patch: 3}
+var VERSION Version = Version{Major: 1, Minor: 2, Patch: 3}
 
 type Version struct {
 	Major int
@@ -41,9 +41,9 @@ func ParseVersion(version string) Version {
 func (v Version) GreaterThan(v1 Version) bool {
 	if v.Major > v1.Major {
 		return true
-	} else if v.Minor > v1.Minor {
+	} else if v.Minor > v1.Minor && v.Major >= v1.Major {
 		return true
-	} else if v.Patch > v1.Patch {
+	} else if v.Patch > v1.Patch && v.Minor >= v1.Minor {
 		return true
 	}
 

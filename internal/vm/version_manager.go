@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	u "github.com/zaviermiller/zen/internal/util"
+	d "github.com/zaviermiller/zen/internal/display"
 )
 
 type updateCheck struct {
@@ -55,7 +55,7 @@ func (uc *updateCheck) Download(zenPath string) {
 	t2 := time.Now()
 	diff := t2.Sub(t1)
 
-	u.ZenWeirdLog(fmt.Sprintf(u.Clear+u.Bright+"Done updating in %s\n\n"+u.Normal, diff))
+	d.ZenWeirdLog(fmt.Sprintf(d.Clear+d.Bright+"Done updating in %s\n\n"+d.Normal, diff))
 }
 
 func (uc *updateCheck) ReloadBinary() {
@@ -108,8 +108,8 @@ func CheckUpdate() bool {
 			return false
 		}
 
-		fmt.Println(u.Bright + u.Blue + "\n   UPDATE FOUND!" + u.Green + " Version: " + ghVersion.String() + u.Normal + " (" + binSize(int64(asset["size"].(float64))) + ")")
-		u.ZenLog("Would you like to update now?" + u.Yellow + " (y/n)" + u.Normal + ": ")
+		fmt.Println(d.Bright + d.Blue + "\n   UPDATE FOUND!" + d.Green + " Version: " + ghVersion.String() + d.Normal + " (" + binSize(int64(asset["size"].(float64))) + ")")
+		d.ZenLog("Would you like to update now?" + d.Yellow + " (y/n)" + d.Normal + ": ")
 
 		reader := bufio.NewReader(os.Stdin)
 		input, err := reader.ReadString('\n')
@@ -145,7 +145,7 @@ func CheckUpdate() bool {
 
 func check(err error) {
 	if err != nil {
-		fmt.Println(u.Bright + u.Red + "ZEN ERROR: " + u.Normal + err.Error())
+		fmt.Println(d.Bright + d.Red + "ZEN ERROR: " + d.Normal + err.Error())
 		os.Exit(1)
 	}
 }

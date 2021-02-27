@@ -6,7 +6,11 @@ import (
 
 var Red = "\033[31m"
 
+var RedHighlight = "\u001b[41;1m"
+
 var Green = "\033[32m"
+
+var GreenHighlight = "\u001b[42m"
 
 var Yellow = "\033[33m"
 
@@ -21,6 +25,10 @@ var Dark = "\033[2m"
 var Normal = "\033[0m"
 
 var Clear = "\u001b[2K"
+
+var White = "\u001b[37m"
+
+var Black = "\u001b[30m"
 
 func Zen(v string) string {
 	return ` ____         

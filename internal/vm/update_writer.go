@@ -3,7 +3,7 @@ package vm
 import (
 	"io"
 
-	u "github.com/zaviermiller/zen/internal/util"
+	d "github.com/zaviermiller/zen/internal/display"
 )
 
 // Custom updater for custom read func
@@ -19,7 +19,7 @@ func (z *zenUpdateWriter) Read(p []byte) (int, error) {
 	z.total += int64(n)
 
 	if err == nil {
-		u.PrintSimpleLoader(int(z.total), z.size, "Downloading update...")
+		d.PrintSimpleLoader(int(z.total), z.size, "Downloading update...")
 	}
 
 	return n, err
