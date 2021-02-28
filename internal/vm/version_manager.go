@@ -13,7 +13,6 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"strings"
 	"time"
 
 	d "github.com/zaviermiller/zen/internal/display"
@@ -28,7 +27,7 @@ type updateCheck struct {
 func (uc *updateCheck) Download(zenPath string) {
 	t1 := time.Now()
 
-	zenBin, err := os.Create(zenPath + ".tmp")
+	zenBin, err := os.Create("new-" + zenPath)
 	check(err)
 
 	defer zenBin.Close()
@@ -47,7 +46,11 @@ func (uc *updateCheck) Download(zenPath string) {
 	_, err = io.Copy(zenBin, updateWriter)
 	check(err)
 
-	err = os.Rename(zenPath+".tmp", zenPath)
+	// zen -> old-zen
+	// new-zen -> zen
+	err = os.Rename(zenPath, "old-"+zenPath)
+	check(err)
+	err = os.Rename("new-"+zenPath, zenPath)
 	check(err)
 	err = os.Chmod(zenPath, 0774)
 	check(err)
@@ -67,18 +70,9 @@ func (uc *updateCheck) ReloadBinary() {
 	cmd.Run()
 
 }
-
-func finishUpdate() {
-
-}
-
 func CheckUpdate() bool {
 	GOOS := runtime.GOOS
 	GOARCH := runtime.GOARCH
-	if strings.Contains(os.Args[0], ".tmp") {
-		finishUpdate()
-		return false
-	}
 	resp, err := http.Get("https://api.github.com/repos/zaviermiller/zen/releases")
 	check(err)
 

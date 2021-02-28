@@ -16,9 +16,13 @@ else
 	@echo ""
 	@echo "[M] Compiling Zen for all platforms..."
 	@echo ""
-	@for GOOS in darwin linux windows freebsd; do \
+	@for GOOS in darwin linux windows; do \
 		for GOARCH in 386 amd64; do \
+			if [ "$$GOOS" = "windows" ]; then \
+			go build -v -o bin/zen$(v)-$$GOOS-$$GOARCH.exe cmd/zen/main.go; \
+			else \
 			go build -v -o bin/zen$(v)-$$GOOS-$$GOARCH cmd/zen/main.go; \
+			fi \
 		done ; \
 	done
 endif

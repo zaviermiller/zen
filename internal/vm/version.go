@@ -58,3 +58,10 @@ func (v Version) String() string {
 	}
 	return fmt.Sprintf("%d.%d", v.Major, v.Minor)
 }
+
+func (v Version) FileString() string {
+	if v.Patch != -1 {
+		return fmt.Sprintf("%d_%d_%d", v.Major, v.Minor, v.Patch)
+	}
+	return fmt.Sprintf("%d_%d", v.Major, v.Minor)
+}

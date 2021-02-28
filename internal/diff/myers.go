@@ -59,22 +59,24 @@ func (md MyersDiff) Print() {
 	score := 0
 
 	fmt.Print(d.Clear)
-	printStr := ""
+	correctStr := ""
+	badStr := ""
 
 	for _, op := range md.Ops {
 		switch op {
 		case INS:
-			printStr += (d.GreenHighlight + d.White + d.Bright + (md.CorrectContent[dstIndex]) + d.Normal)
+			correctStr += (d.GreenHighlight + d.Black + d.Bright + (md.CorrectContent[dstIndex]) + d.Normal)
 			dstIndex += 1
 			score++
 
 		case EQL:
-			printStr += md.CorrectContent[dstIndex]
+			correctStr += md.CorrectContent[dstIndex]
+			badStr += md.CorrectContent[dstIndex]
 			srcIndex += 1
 			dstIndex += 1
 
 		case DEL:
-			printStr += d.RedHighlight + d.White + d.Bright + (md.TestContent[srcIndex]) + d.Normal
+			badStr += d.RedHighlight + d.White + d.Bright + (md.TestContent[srcIndex]) + d.Normal
 			srcIndex += 1
 			score++
 		}
@@ -86,7 +88,8 @@ func (md MyersDiff) Print() {
 	// 	fmt.Println("   [" + d.Blue + md.TestName + d.Normal + "]: " + d.Red + printStr + d.Normal + "\n")
 	// }
 
-	fmt.Println(printStr)
+	fmt.Println(correctStr)
+	fmt.Println(badStr)
 }
 
 // func (md MyersDiff) shortestEdit() [][]int {
