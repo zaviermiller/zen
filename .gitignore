@@ -1,6 +1,6 @@
 /bin
 
-zen
+
 *.env
 
 .version_sync

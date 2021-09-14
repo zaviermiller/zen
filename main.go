@@ -1,55 +1,28 @@
+/*
+Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 package main
 
 import (
-	"errors"
-	"fmt"
-	"os"
-	"os/exec"
-
-	"github.com/zaviermiller/zen/internal/runner"
-	u "github.com/zaviermiller/zen/internal/util"
-	"github.com/zaviermiller/zen/internal/vm"
+	"github.com/zaviermiller/zen/cmd"
 )
 
 func main() {
 
-	if vm.CheckUpdate() {
-		return
-	}
+	// load plugins and vm and stuff?
 
-	// ensure correct usage
-	if len(os.Args) < 3 {
-		check(errors.New("Usage: " + u.Purple + "zen [example binary] [your binary]" + u.Normal))
-	}
-
-	// create variables from args
-	correctBinPath := os.Args[1]
-	testBinPath := os.Args[2]
-	binOpts := os.Args[3:]
-
-	// build commands for processes
-	correctCmd := exec.Command(correctBinPath, binOpts...)
-	testCmd := exec.Command(testBinPath, binOpts...)
-
-	// create processes
-	correctProc, err := runner.NewProcess(correctCmd, runner.CORRECT)
-	check(err)
-	testProc, err := runner.NewProcess(testCmd, runner.TEST)
-	check(err)
-
-	// create the zen runner
-	session, err := runner.NewSession(&correctProc, &testProc)
-	check(err)
-
-	// run the zen session
-	session.Run()
-
-}
-
-// basic error checking function
-func check(err error) {
-	if err != nil {
-		fmt.Println(u.Bright + u.Red + "ZEN ERROR: " + u.Normal + err.Error())
-		os.Exit(1)
-	}
+	// start the cobra session
+	cmd.Execute()
 }
